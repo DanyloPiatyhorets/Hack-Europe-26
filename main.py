@@ -26,9 +26,11 @@ def analyze_node(state: AgentState):
     return {"proposed_changes": mock_changes}
 
 def human_review_node(state: AgentState):
-    # Pauses the graph and exposes data to the UI
+    # The graph stops executing here. 
+    # When resumed via the API, req.approved_changes is assigned to human_response.
     human_response = interrupt(state["proposed_changes"])
-    # Resumes with human's modified data
+    
+    # Overwrite the state with ONLY the items the human explicitly approved.
     return {"proposed_changes": human_response}
 
 def execute_node(state: AgentState):
@@ -79,8 +81,14 @@ def start_workflow(req: StartReq):
 @app.post("/resume")
 def resume_workflow(req: ResumeReq):
     config = {"configurable": {"thread_id": req.thread_id}}
-    # Resume graph with human input
+    
+    # Push the human's approved array back into the paused graph
     graph.invoke(Command(resume=req.approved_changes), config)
     
+    # Retrieve the final state to send back to the React UI
     final_state = graph.get_state(config).values
-    return {"status": "completed", "final_state": final_state}
+    
+    return {
+        "status": "completed", 
+        "final_state": final_state
+    }

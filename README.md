@@ -1,5 +1,10 @@
 # HackEurope2026 Template Repository
 
+## DEMO UI
+Go to `cd frontend/wise-agent-workbench-main/wise-agent-workbench-main`
+Run `npm run dev`
+
+TODO: Adjust ui to backend and relocate folders?
 
 ## Structure
 
