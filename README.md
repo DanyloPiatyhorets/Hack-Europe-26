@@ -1,10 +1,5 @@
 # HackEurope2026 Template Repository
 
-This repository is scaffolded with a **Thick Dashboard, Thin Agent** paradigm.
-
-- **Thick Dashboard**: robust frontend views and managerial controls.
-- **Thin Agent**: deterministic LangGraph node execution only.
-- **Offline Reliability**: mandatory mock datasets for live demo resilience.
 
 ## Structure
 
@@ -20,4 +15,3 @@ This repository is scaffolded with a **Thick Dashboard, Thin Agent** paradigm.
   - `market_benchmarks/` (mock external market data)
   - `contracts/` (synthetic MSAs with DORA failures)
 
-> No production logic included yet—this is a template-only baseline.
