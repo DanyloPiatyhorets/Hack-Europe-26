@@ -2,6 +2,8 @@ from typing import TypedDict, Literal
 from langgraph.graph import StateGraph, END
 import random
 
+os.environ["PAID_API_KEY"] = "your-paid-secret-key"
+
 # 1. Define the State structure
 #  This is the data structure that will be passed through the graph. Each node can read and modify this state.
 # where our input is the supply chain data and our output is a final report.
