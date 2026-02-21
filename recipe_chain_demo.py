@@ -3,11 +3,11 @@ from langgraph.graph import StateGraph, END
 import random
 import os
 from dotenv import load_dotenv
-from paid import PaidClient 
+from paid import Paid, Signal
 
 # 1. Load the sandbox key from your .env file
 load_dotenv()
-paid_client = PaidClient(api_key=os.environ.get("PAID_API_KEY"))
+paid_client = Paid(token=os.environ.get("PAID_API_KEY"))
 
 os.environ["PAID_API_KEY"] = "your-paid-secret-key"
 
