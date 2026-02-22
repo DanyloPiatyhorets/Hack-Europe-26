@@ -4,17 +4,18 @@ import os
 import sys
 from pathlib import Path
 from typing import Any
+from backend.stripe.stripe_helper import create_invoice_for_contract, evaluate_stripe_to_contract
 
 import psycopg
 
 try:
-    from ..types import Contract
+    from ..contract_types import Contract
 except ImportError:
     # Support direct script execution: python backend/factory/owned_contracts_api.py
     repo_root = Path(__file__).resolve().parents[2]
     if str(repo_root) not in sys.path:
         sys.path.insert(0, str(repo_root))
-    from backend.types import Contract
+    from backend.contract_types import Contract
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL", "postgresql://hack:hackpass@localhost:5432/hackathon"
@@ -36,15 +37,41 @@ def get_owned_contracts_for_product(
 
     with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
         cur.execute(sql, params)
-        return [Contract.from_row(row) for row in cur.fetchall()]
+        res = []
+        for row in cur.fetchall():
+            cur_contract = Contract.from_row(row)
+            (stripe_product_id,_, stripe_customer_id) = evaluate_stripe_to_contract(cur_contract)
+            res.append(cur_contract)
+            add_stripe_product_id_to_db(conn, product_id=cur_contract.product_id, stripe_product_id=stripe_product_id)
+            add_stripe_customer_id_to_db(conn, company_id=cur_contract.company_id, stripe_customer_id=stripe_customer_id)
+            create_invoice_for_contract(cur_contract)
+        return res
 
+def add_stripe_customer_id_to_db(conn: psycopg.Connection[Any], company_id: str, stripe_customer_id: str):
+    sql = """
+    UPDATE company
+    SET stripe_id = %(stripe_customer_id)s
+    WHERE id = %(company_id)s
+    """
+    with conn.cursor() as cur:
+        cur.execute(sql, {"company_id": company_id, "stripe_customer_id": stripe_customer_id})
+        conn.commit()
+
+def add_stripe_product_id_to_db(conn: psycopg.Connection[Any], product_id: str, stripe_product_id: str):
+    sql = """
+    UPDATE product
+    SET stripe_id = %(stripe_product_id)s
+    WHERE id = %(product_id)s
+    """
+    with conn.cursor() as cur:
+        cur.execute(sql, {"product_id": product_id, "stripe_product_id": stripe_product_id})
+        conn.commit()
 
 def fetch_owned_contracts_for_product(
     product_id: str, limit: int = 200
 ) -> list[Contract]:
     with psycopg.connect(DATABASE_URL) as conn:
         return get_owned_contracts_for_product(conn=conn, product_id=product_id, limit=limit)
-
 
 def _as_jsonable(contract: Contract) -> dict[str, Any]:
     return {

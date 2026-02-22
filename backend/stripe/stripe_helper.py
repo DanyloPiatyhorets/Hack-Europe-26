@@ -2,17 +2,78 @@ import os
 import stripe
 from typing import Optional, List, Dict, Any
 from dotenv import load_dotenv
+from backend.contract_types import Contract
+from backend.stripe.sql_lookup_helpers import get_name_and_email_for_company_id, get_name_for_product_id
 
 load_dotenv()
 
 stripe.api_key = os.getenv("STRIPE_API_KEY")
 
-def create_stripe_customer(name: str, email: str) -> str:
-    customer = stripe.Customer.create(name=name, email=email)
+def retrieve_stripe_customer(software_customer_id: str) -> Optional[stripe.Customer]:
+    try:
+        all_customers = stripe.Customer.list(limit=100)  # Adjust limit as needed
+        for customer in all_customers.data:
+            if customer.metadata.get("software_customer_id") == software_customer_id:
+                return customer
+        return None
+    except stripe.error.StripeError as e:
+        print(f"Error retrieving customer: {e.user_message}")
+        return None
+
+def retrieve_stripe_product(software_product_id: str) -> Optional[stripe.Product]:
+    try:
+        all_products = stripe.Product.list(limit=100)  # Adjust limit as needed
+        for product in all_products.data:
+            if product.metadata.get("software_product_id") == software_product_id:
+                return product
+        return None
+    except stripe.error.StripeError as e:
+        print(f"Error retrieving product: {e.user_message}")
+        return None
+
+def evaluate_stripe_to_contract(contract: Contract):
+    # create a product if it doesn't exist, or retrieve the existing one
+    stripe_product = retrieve_stripe_product(contract.product_id)
+    if not stripe_product:
+        stripe_product_id = create_stripe_product(name=get_name_for_product_id(contract.product_id), id=contract.product_id)
+    else:
+        stripe_product_id = stripe_product.id
+    # create a price for the product (or find an existing one)
+    price_id = find_price_for_product(stripe_product_id, currency=contract.currency)
+    if not price_id:
+        price_id = create_price_for_product(
+            stripe_product_id=stripe_product_id,
+            unit_amount=int(float(contract.unit_price) * 100),  # convert to cents
+            currency=contract.currency,
+        )
+    # create a customer if it doesn't exist, or retrieve the existing one
+    stripe_customer = retrieve_stripe_customer(contract.company_id)
+    if not stripe_customer:
+        (name, email) = get_name_and_email_for_company_id(contract.company_id)
+        stripe_customer_id = create_stripe_customer(
+            name=name, email=email, id=contract.company_id
+        )
+    else:
+        stripe_customer_id = stripe_customer.id
+    return (stripe_product_id, price_id, stripe_customer_id)
+
+def create_invoice_for_contract(contract: Contract):
+    (_, price_id, stripe_customer_id) = evaluate_stripe_to_contract(contract)
+    invoice_id = create_empty_invoice(customer_id=stripe_customer_id)
+    add_invoice_item_by_price(
+        invoice_id=invoice_id,
+        customer_id=stripe_customer_id,
+        price_id=price_id,
+        quantity=int(float(contract.quantity)),
+    )
+    return invoice_id
+
+def create_stripe_customer(name: str, email: str, id: str) -> str:
+    customer = stripe.Customer.create(name=name, email=email, metadata={"software_customer_id": id})
     return customer.id
 
-def create_stripe_product(name: str) -> str:
-    product = stripe.Product.create(name=name)
+def create_stripe_product(name: str, id: str) -> str:
+    product = stripe.Product.create(name=name, metadata={"software_product_id": id})
     return product.id
 
 def create_price_for_product(
@@ -46,6 +107,10 @@ def list_prices_for_product(
         limit=limit,
     )
     return prices.data
+
+def list_all_customers() -> List[stripe.Customer]:
+    customers = stripe.Customer.list()
+    return customers.data
 
 def find_price_for_product(
     stripe_product_id: str,

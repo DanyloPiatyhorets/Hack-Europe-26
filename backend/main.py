@@ -7,11 +7,11 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from backend.factory.owned_contracts_api import fetch_owned_contracts_for_product
-from backend.types import Contract
+from backend.contract_types import Contract
 from backend.markets.markets_api import fetch_market_contracts_for_product
 
 # TODO: replace with frontend-selected product id.
-PRODUCT_ID = "0c3358f0-b788-4ee1-aeff-45aee4bedf70"
+PRODUCT_ID = "cc9f3b9a-a9f4-4ad1-8958-fab34acaae12"
 
 
 def main() -> None:
@@ -26,6 +26,9 @@ def main() -> None:
         product_id=PRODUCT_ID
     )
     print(f"[main] MARKET contracts loaded: {len(market_contracts)}")
+
+    # optimisation_step -> solutions
+    # evaluate_option()
 
     print("[main] Data retrieval stage complete.")
 
