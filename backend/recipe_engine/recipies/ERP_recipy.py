@@ -2,14 +2,44 @@ import os
 import uuid
 import json
 from typing import TypedDict, List
-from dotenv import load_dotenv
 from langgraph.graph import StateGraph, END, START
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from prompts import FLAVOUR_PROMPTS
-from paid.tracing import paid_autoinstrument, initialize_tracing, paid_tracing, signal
+try:
+    from dotenv import load_dotenv
+except Exception:
+    load_dotenv = None
 
-load_dotenv()
+try:
+    from .prompts import FLAVOUR_PROMPTS
+except ImportError:
+    from prompts import FLAVOUR_PROMPTS
+
+try:
+    from paid.tracing import paid_autoinstrument, initialize_tracing, paid_tracing, signal
+except Exception:
+    # Fallback no-op tracing in local/dev environments without paid SDK.
+    def paid_autoinstrument(*args, **kwargs):
+        return None
+
+    def initialize_tracing(*args, **kwargs):
+        return None
+
+    def signal(*args, **kwargs):
+        return None
+
+    class _NoopTraceCtx:
+        def __enter__(self):
+            return None
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    def paid_tracing(*args, **kwargs):
+        return _NoopTraceCtx()
+
+if load_dotenv:
+    load_dotenv()
 initialize_tracing()
 paid_autoinstrument(libraries=["gemini", "langchain"])
 
