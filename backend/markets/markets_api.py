@@ -8,13 +8,13 @@ from typing import Any
 import psycopg
 
 try:
-    from backend.types import Contract
+    from backend.contract_types import Contract
 except ImportError:
     # Support direct script execution from repo root and subfolders.
     repo_root = Path(__file__).resolve().parents[2]
     if str(repo_root) not in sys.path:
         sys.path.insert(0, str(repo_root))
-    from backend.types import Contract
+    from backend.contract_types import Contract
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL", "postgresql://hack:hackpass@localhost:5432/hackathon"

@@ -10,7 +10,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from backend.factory.owned_contracts_api import fetch_owned_contracts_for_product
-from backend.types import Contract
+from backend.contract_types import Contract
 from backend.markets.markets_api import fetch_market_contracts_for_product
 
 # Import your agent and paid tracing
@@ -48,6 +48,9 @@ def main() -> None:
 
     market_contracts: list[Contract] = fetch_market_contracts_for_product(product_id=PRODUCT_ID)
     print(f"[main] MARKET contracts loaded: {len(market_contracts)}")
+
+    # optimisation_step -> solutions
+    # evaluate_option()
 
     print("[main] Data retrieval stage complete.")
 
