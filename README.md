@@ -1,4 +1,4 @@
-# Agentic ERP Optimisation for Business
+<img width="624" height="72" alt="image" src="https://github.com/user-attachments/assets/d740ce79-c8b9-4966-97e6-749055e02e73" /># Agentic ERP Optimisation for Business
 ## Brought to you by Hampton Square Coding Club
 ## Devpost link: https://devpost.com/software/erp-business-optimisation
 
@@ -22,6 +22,8 @@ Unlike a "black box" AI, our system runs specific "recipes" (pipelines) that the
 The key to the value of our product is in our integrations:
 - **Paid.ai**, which tracks agent cost against value saved, which provides data for estimated future run costs to decrease uncertainty in pricing of agents
 - **Stripe**, helps to finalise agentic analysis by automatically generating invoces after HITL approval. This removes repetitive error prone tasks from optimisation workflow.
+
+<img width="1121" height="685" alt="Screenshot 2026-02-22 075230" src="https://github.com/user-attachments/assets/9d2c089f-00a8-4c16-9988-805da4b524f8" />
 
 
 ## How we built it
