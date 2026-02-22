@@ -1,4 +1,4 @@
-<img width="624" height="72" alt="image" src="https://github.com/user-attachments/assets/d740ce79-c8b9-4966-97e6-749055e02e73" /># Agentic ERP Optimisation for Business
+# Agentic ERP Optimisation for Business
 ## Brought to you by Hampton Square Coding Club
 ## Devpost link: https://devpost.com/software/erp-business-optimisation
 
