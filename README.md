@@ -1,6 +1,6 @@
 # Agentic ERP Optimisation for Business
 
-## Devpost link: https://devpost.com/software/erp-business-optimisation
+> Devpost link: https://devpost.com/software/erp-business-optimisation
 
 ## Project Outline
 
