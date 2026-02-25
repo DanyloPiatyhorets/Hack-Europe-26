@@ -2,6 +2,8 @@
 
 > Devpost link: https://devpost.com/software/erp-business-optimisation
 
+<img width="1121" height="685" alt="Screenshot 2026-02-22 075230" src="https://github.com/user-attachments/assets/9d2c089f-00a8-4c16-9988-805da4b524f8" />
+
 ## Project Outline
 
 We built Agentic **ERP**, a modular business dashboard that optimises specific operational workflows. Our prototype focuses on a **supply chain optimisation module.**
@@ -22,9 +24,6 @@ Unlike a "black box" AI, our system runs specific "recipes" (pipelines) that the
 The key to the value of our product is in our integrations:
 - **Paid.ai**, which tracks agent cost against value saved, which provides data for estimated future run costs to decrease uncertainty in pricing of agents
 - **Stripe**, helps to finalise agentic analysis by automatically generating invoces after HITL approval. This removes repetitive error prone tasks from optimisation workflow.
-
-<img width="1121" height="685" alt="Screenshot 2026-02-22 075230" src="https://github.com/user-attachments/assets/9d2c089f-00a8-4c16-9988-805da4b524f8" />
-
 
 ## How we built it
 
