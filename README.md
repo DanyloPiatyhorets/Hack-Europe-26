@@ -1,8 +1,8 @@
 # Agentic ERP Optimisation for Business
-## Brought to you by Hampton Square Coding Club
+
 ## Devpost link: https://devpost.com/software/erp-business-optimisation
 
-## What it does
+## Project Outline
 
 We built Agentic **ERP**, a modular business dashboard that optimises specific operational workflows. Our prototype focuses on a **supply chain optimisation module.**
 
